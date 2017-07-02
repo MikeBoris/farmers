@@ -28,7 +28,8 @@ def main():
 		submit_url = URL.format(zip)
 		url = requests.get(submit_url)
 		results = url.json()
-		return render_template('index.html', results=results)
+		farm_results = results['results']
+		return render_template('index.html', results=farm_results)
 
 if __name__ == '__main__':
 	app.run(debug=True, use_reloader=True)
