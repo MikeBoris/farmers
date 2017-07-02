@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>farmers</title>
+  
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Amatic+SC');
+    h1 {
+      padding: 10px;
+      font-family: 'Amatic SC', cursive;
+      font-size: 100px;
+    }
+    p {
+      padding: 15px;
+      font-size: 19px;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="container-fluid">
+  
+  <h1>farmers</h1>
+  
+    <p>
+      Search for nearby farmers' markets.
+    </p>
+    
+  <div class="col-lg-6">
+    <div class="input-group">
+      <form method="post" action="/farm">
+        <input type="text" class="form-control" name="zip_input" placeholder="Enter a zipcode">
+        <span class="input-group-btn">
+          <button class="btn btn-secondary" type="button">Go!</button>
+        </span>
+      </form>  
+    </div>
+  </div>
+  
+  {{ results }}
+
+
+
+  </div>  
+  
+<script src="https://code.jquery.com/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</body>
+</html>
