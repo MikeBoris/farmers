@@ -53,7 +53,37 @@
               {% endfor %}
             </tbody>
     </table>
+
+
+
+
+
+
+
+    <div>
+      {% for link in googlelinks %}
+
+      {{ link }}
+
+      {% endfor %}
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
   </div>  
+
+
+
+
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -69,5 +99,132 @@
 <script src="https://code.jquery.com/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
+
+<script>
+  function getResults(zip) {
+    // or
+    // function getResults(lat, lng) {
+    $.ajax({
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        // submit a get request to the restful service zipSearch or locSearch.
+        url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=" + zip,
+        // or
+        // url: "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/locSearch?lat=" + lat + "&lng=" + lng,
+        dataType: 'jsonp',
+        jsonpCallback: 'searchResultsHandler'
+    });
+}
+//iterate through the JSON result object.
+function searchResultsHandler(searchResults) {
+    for (var key in searchresults) {
+        alert(key);
+        var results = searchresults[key];
+        for (var i = 0; i < results.length; i++) {
+            var result = results[i];
+            for (var key in result) {
+                //only do an alert on the first search result
+                if (i == 0) {
+                    alert(result[key]);
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
 </body>
 </html>
+
+<!--
+import requests
+
+In [2]: url = "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=01915"
+
+In [3]: submit = requests.get(url)
+
+In [4]: results = submit.json()
+
+In [5]: for result in results['results
+  File "<ipython-input-5-a339565c53a8>", line 1
+    for result in results['results
+                                  ^
+SyntaxError: EOL while scanning string literal
+
+
+In [6]: for result in results['results']:
+   ...:     id = result['id']
+   ...:     
+
+In [7]: market = "http://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id="
+
+In [8]: for result in results['results']:
+   ...:     id = result['id']
+   ...:     details = requests.get(market + id).json()
+   ...:     print(details['marketdetails']['GoogleLink'])
+   ...:         
+http://maps.google.com/?q=42.5467800%2C%20-70.8843450%20(%22Beverly+Farmers+Market%22)
+http://maps.google.com/?q=42.520665%2C%20-70.894653%20(%22Salem+Farmers'+Market%22)
+http://maps.google.com/?q=42.563242%2C%20-70.938435%20(%22Danvers+Farmers+Market%22)
+http://maps.google.com/?q=42.498938%2C%20-70.861983%20(%22Marblehead+Farmers'+Market%22)
+http://maps.google.com/?q=42.526209%2C%20-70.928350%20(%22Peabody+Farmer's+Market%22)
+http://maps.google.com/?q=42.631883%2C%20-70.781781%20(%22Essex+Farmers+Market%22)
+http://maps.google.com/?q=42.6296%2C%20-70.9453%20(%22Topsfield+Farmers+Market%22)
+http://maps.google.com/?q=42.4791020%2C%20-70.9204450%20(%22Swampscott+Farmers+Market%22)
+http://maps.google.com/?q=42.6779110%2C%20-70.8368810%20(%22Ipswich+Farmers+Market%22)
+http://maps.google.com/?q=42.5923%2C%20-71.0148%20(%22Middleton%22)
+http://maps.google.com/?q=42.463643%2C%20-70.943780%20(%22Lynn%2c+Central+Square%22)
+http://maps.google.com/?q=42.60567%2C%20-70.67753%20(%22Cape+Ann+Farmers+Market%22)
+http://maps.google.com/?q=42.612646%2C%20-70.665790%20(%22Cape+Ann+Farmers+Market%22)
+http://maps.google.com/?q=42.713629%2C%20-70.881960%20(%22Rowley+Farmers+Market%22)
+http://maps.google.com/?q=42.451645%2C%20-71.016355%20(%22Saugus%2fCliftondale%22)
+http://maps.google.com/?q=42.507127%2C%20-71.079174%20(%22Wakefield+Farmer's+Market%22)
+http://maps.google.com/?q=42.7248%2C%20-70.9666%20(%22Georgetown+Farmers'+Market%22)
+http://maps.google.com/?q=42.457203%2C%20-71.064284%20(%22Melrose+%26+Wakefield+Winter+Farmers'+Market%22)
+http://maps.google.com/?q=42.458997%2C%20-71.070378%20(%22Melrose%2fSally+Frank's+Farmers'+Market%22)
+
+In [9]: for result in results['results']:
+   ...:     id = result['id']
+   ...:     details = requests.get(market + id).json()
+   ...:     print(details['marketdetails']['Address'])
+   ...:     
+   ...:         
+Rantoul Street and Railroad Ave., Beverly, Massachusetts, 01915
+Front Street at Derby Square, Salem, Massachusetts, 01970
+87 Elm Street, Danvers , Massachusetts, 01923
+217 Pleasant St, Marblehead , Massachusetts, 01945
+24 Lowell Street, Peabody , Massachusetts, 01960
+24 Martin Street, Essex , Massachusetts, 01929
+207 Boston Street, Topsfield, Massachusetts, 01983
+200 Essex Street, Swampscott, Massachusetts, 01907
+36 S. Main St., Ipswich, Massachusetts, 01938
+49 South Main Street,, Middleton, Massachusetts, 01949
+Corner of Union & Exchange Streets, Lynn, Massachusetts, 01901
+Stage Fort Park, Gloucester, Massachusetts, 01930
+Church Street, Gloucester, Massachusetts, 01930
+rowley common  main street, Rowley , Massachusetts, 01969
+Anna Parker Playground Essex Street, Saugus, Massachusetts, 01906
+Hall Park, Wakefield, Massachusetts, 01880
+Crosby's Marketplace, Georgetown, Massachusetts, 01833
+590 Main Street, Melrose, Massachusetts, 02176
+West Emerson and Vinton Streets, Melrose , Massachusetts, 02176
+
+-->
