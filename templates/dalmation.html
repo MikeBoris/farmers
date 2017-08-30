@@ -43,8 +43,9 @@
     .resultsText {
       font-family: 'Averia Serif Libre', cursive;
       font-size: 18px;
-      padding-left: 50px;
-      padding-top: 25px;
+    }
+    .table {
+      margin: auto;
     }
     </style>
 
@@ -81,12 +82,18 @@
 
 
           <div class="market_list">
-            <div id="results" class="resultsText"></div>
+            <div id="results" class="resultsText">
+
+            </div>
           </div>
       </div>
     </div>
   </section>
+
+
+    <nav class="panel">
   
+  </nav>
 
   <!-- breadcrumbs -->
 
@@ -97,6 +104,8 @@
       <li class="is-active"><a href="#" aria-current="page">Farmers' Markets Near You</a></li>
     </ul>
   </nav>
+
+
 
   <!-- google analytics tracking function -->
 
@@ -121,19 +130,75 @@
     $('#getZip').on("click", function() {
       
       var zip, url;
+      var details, address;
+      var deets_url;
+
       zip = document.getElementById("input_text").value;     
       url = 'https://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=' + zip;
       
       $.getJSON(url).done(function( data ) {
         
+        // response data in array
         var markets = data.results;
-        var output = '<strong>Distance</strong><strong>Market Name</strong><br>'
-        output += '<ul>';
-        for (var i in markets) {
-          output += '<li>' + markets[i].marketname + '</li>';
-        }
-        output += '</ul>';
+        // beginning html table for results
+        var output = `<table class="table">
+                        <thead>
+                          <tr>
+                            <th>Distance</th>
+                            <th>Market Name</th>
+                          </tr>
+                        </thead>
+                        <tbody>`;
         
+
+        // loop through response array
+        for (var i in markets) {
+          // each element in array is a string with format: '7.6 Nelsonville Farmers Market'
+          // manipulate string before returning in results
+          // split string by spaces
+          var elements = markets[i].marketname.split(' ');
+          // first element is distance in miles; shift to remove distance from list
+          var miles = elements.shift();
+          // remaining elements are split market name; join remaining elements into marketname
+          var marketName = elements.join(' ');
+
+          // insert string variables into html table for results
+          output += '<tr><td>' + miles + ' <small>miles from</small>';
+          output += '</td><td>' + marketName;
+
+
+
+          // assemble url for market details request
+          deets_url = 'https://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id=' + markets[i].id;
+
+          
+
+
+          $.getJSON(deets_url).done(function ( data2 ) {
+            details = data2.marketdetails;
+            address = details.Address;
+
+            /*
+            details response has format: 
+
+            Address: "52 Public Square, Athens , Ohio"
+            GoogleLink: "http://maps.google.com/?q=39.460973%2C%20-82.231891%20(%22Nelsonville+Farmers+Market+%22)"
+            Products: "Baked goods; Eggs; Fresh fruit and vegetables; Fresh and/or dried herbs; Canned or preserved fruits, vegetables, jams, jellies, preserves, salsas, pickles, dried fruit, etc.; Maple syrup and/or maple products; Plants in containers; Prepared foods (for immediate consumption); Soap and/or body care products"
+            Schedule: "06/07/2014 to 10/25/2014 Sat: 10:00 AM-12:00 PM;<br> <br> <br> "
+            */
+
+            output += '</td><td>' + address;
+            console.log(output);  
+          });
+
+        }
+
+        console.log(output);
+
+        output += '</td></tr>'
+        // table has entries; close table
+        output += '</tbody></table>';
+        // return output html
         $(".resultsText").html(output);
         
       });
