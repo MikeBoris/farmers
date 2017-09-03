@@ -4,6 +4,7 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="w-dZ07hUlFK97g1EUwuc6N4z2e_sv6vXl5ZFtNP7rTY" />
 
     <title>USA Farmers' Market Lookup</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -126,21 +127,19 @@
   <script>
   
   $(document).ready(function() {
-    
     $('#getZip').on("click", function() {
-      
-      var zip, url;
+      var zip, url, output, markets;
       var details, address;
+      // url for market details request
       var deets_url;
-
       zip = document.getElementById("input_text").value;     
       url = 'https://search.ams.usda.gov/farmersmarkets/v1/data.svc/zipSearch?zip=' + zip;
-      
+
+      // first getjson for zip -> market lookup
       $.getJSON(url).done(function( data ) {
-        
         // response data in array
-        var markets = data.results;
-        // beginning html table for results
+        markets = data.results;
+                      // beginning html table for results
         var output = `<table class="table">
                         <thead>
                           <tr>
@@ -167,47 +166,25 @@
           output += '</td><td>' + marketName;
 
 
-
-          // assemble url for market details request
-          deets_url = 'https://search.ams.usda.gov/farmersmarkets/v1/data.svc/mktDetail?id=' + markets[i].id;
-
-          
-
-
-          $.getJSON(deets_url).done(function ( data2 ) {
-            details = data2.marketdetails;
-            address = details.Address;
-
-            /*
-            details response has format: 
-
-            Address: "52 Public Square, Athens , Ohio"
-            GoogleLink: "http://maps.google.com/?q=39.460973%2C%20-82.231891%20(%22Nelsonville+Farmers+Market+%22)"
-            Products: "Baked goods; Eggs; Fresh fruit and vegetables; Fresh and/or dried herbs; Canned or preserved fruits, vegetables, jams, jellies, preserves, salsas, pickles, dried fruit, etc.; Maple syrup and/or maple products; Plants in containers; Prepared foods (for immediate consumption); Soap and/or body care products"
-            Schedule: "06/07/2014 to 10/25/2014 Sat: 10:00 AM-12:00 PM;<br> <br> <br> "
-            */
-
-            output += '</td><td>' + address;
-            console.log(output);  
-          });
-
         }
-
-        console.log(output);
-
+                // complete table
         output += '</td></tr>'
         // table has entries; close table
         output += '</tbody></table>';
         // return output html
-        $(".resultsText").html(output);
-        
-      });
+        $(".resultsText").html(output);  
+      }); // first getjson
+
+
+
+ 
+
       
-    });
+    }); // get zip on click
 
     
         
-  });
+  }); // document ready function
   </script>
     
   </body>
